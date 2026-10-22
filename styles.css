@@ -1,0 +1,291 @@
+/* Mileage & Receipts Logger — styles
+ * Made by Asdale Dynamics, LLC. MIT License.
+ */
+
+:root {
+  --bg: #f6f4ef;
+  --ink: #2b2a26;
+  --accent: #2f6f4f;
+  --accent-soft: #e3efe8;
+  --card: #ffffff;
+  --line: #e3e0d8;
+  --danger: #b3402e;
+  --radius: 10px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Georgia, 'Times New Roman', serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.55;
+}
+
+.wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.app-header {
+  background: var(--card);
+  border-bottom: 4px solid var(--accent);
+  padding: 1.2rem 0 0.9rem;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.tagline {
+  margin: 0.3rem 0 0;
+  color: #66635b;
+  font-size: 0.95rem;
+  max-width: 46rem;
+}
+
+/* Tabs */
+.tabs {
+  background: var(--accent);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.tabs-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+}
+
+.tab-btn {
+  font: inherit;
+  font-family: inherit;
+  background: transparent;
+  color: #eef4f0;
+  border: none;
+  border-radius: var(--radius) var(--radius) 0 0;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.tab-btn:hover { background: rgba(255, 255, 255, 0.15); }
+
+.tab-btn.active {
+  background: var(--bg);
+  color: var(--ink);
+  font-weight: bold;
+}
+
+.tab-btn--settings { margin-left: auto; }
+
+/* Cards and layout */
+main { padding: 1.2rem 1rem 2rem; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1rem 1.2rem;
+  margin: 0 0 1.2rem;
+}
+
+h2 { margin: 0.2rem 0 0.6rem; }
+h3 { margin: 0.2rem 0 0.5rem; font-size: 1.05rem; }
+
+.hint { color: #66635b; font-size: 0.92rem; max-width: 46rem; }
+.tiny-hint {
+  color: #88857c;
+  font-size: 0.8rem;
+  margin: 0.3rem 0 0;
+  max-width: 26rem;
+}
+
+/* Forms */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem 1.2rem;
+}
+
+.field { display: flex; flex-direction: column; min-width: 0; }
+.field--full { grid-column: 1 / -1; }
+
+.field label {
+  font-size: 0.85rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+input, select, button {
+  font: inherit;
+  font-family: inherit;
+}
+
+input, select {
+  border: 1px solid #b9b5aa;
+  border-radius: 6px;
+  padding: 0.45rem 0.6rem;
+  background: #fff;
+  color: inherit;
+}
+
+input:focus, select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+button {
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+button:hover { filter: brightness(1.08); }
+button[type="button"] {
+  background: #fff;
+  color: var(--accent);
+}
+
+button[type="submit"], .btn-primary { min-width: 8rem; }
+.btn-primary { background: var(--accent); color: #fff; }
+
+.btn-danger {
+  border-color: var(--danger);
+  background: #fff;
+  color: var(--danger);
+}
+
+.btn-danger:hover { background: var(--danger); color: #fff; }
+
+.btn-small {
+  font-size: 0.82rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+}
+
+.gap { display: inline-block; width: 0.55rem; }
+
+/* Messages */
+.msg { margin: 0; font-size: 0.9rem; }
+.msg-ok { color: var(--accent); }
+.msg-bad { color: var(--danger); }
+
+.empty-state {
+  border: 2px dashed var(--line);
+  border-radius: var(--radius);
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #6d6a61;
+}
+
+.hidden { display: none !important; }
+
+/* Tables */
+table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
+th, td { padding: 0.45rem 0.6rem; border-bottom: 1px solid var(--line); text-align: left; }
+thead th { border-bottom: 2px solid var(--line); }
+tfoot th { border-top: 2px solid var(--ink); border-bottom: none; }
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+td.actions { white-space: nowrap; }
+.table-card { overflow-x: auto; }
+
+/* Summary cards */
+.summary-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+}
+.spacer { flex: 1; }
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+}
+
+.stat-card {
+  background: var(--accent-soft);
+  border: 1px solid #cfe0d6;
+  border-radius: var(--radius);
+  padding: 0.8rem 1rem;
+  text-align: center;
+}
+
+.stat-value { font-size: 1.35rem; font-weight: bold; color: var(--accent); }
+.stat-label { font-size: 0.82rem; color: #4c5a52; }
+.th-label { font-weight: bold; }
+
+/* Print view and printing */
+.print-report {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-top: 1rem;
+}
+
+.print-heading { margin-top: 0; border-bottom: 3px solid var(--ink); padding-bottom: 0.4rem; }
+.print-meta { color: #77746b; font-size: 0.85rem; }
+.print-table { margin: 0 0 1.2rem; }
+.print-totals { border-top: 3px solid var(--ink); padding-top: 0.6rem; max-width: 18rem; margin-left: auto; }
+.print-total-line { display: flex; justify-content: space-between; gap: 1.5rem; }
+
+.toast {
+  position: fixed;
+  bottom: 1.2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.55rem 1.1rem;
+  font-size: 0.92rem;
+  z-index: 20;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+footer {
+  background: var(--card);
+  border-top: 1px solid var(--line);
+  padding: 0.8rem 0 1rem;
+  color: #6d6a61;
+  font-size: 0.85rem;
+}
+
+kbd {
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  padding: 0 0.35rem;
+  font-size: 0.85rem;
+  background: #faf8f4;
+}
+
+code { background: #ece9e0; border-radius: 4px; padding: 0.05rem 0.35rem; }
+
+a { color: var(--accent); }
+
+/* Print layout: show only the report */
+@media print {
+  .no-print, .app-header, .tabs, footer, #toast { display: none !important; }
+  body { background: #fff; }
+  main { padding: 0; }
+  #tab-print { display: block !important; }
+  .print-report {
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+  .print-table { page-break-inside: avoid; }
+}

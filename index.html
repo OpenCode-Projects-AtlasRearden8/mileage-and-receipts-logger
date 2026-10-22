@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mileage & Receipts Logger — Asdale Dynamics, LLC</title>
+  <meta name="description" content="A local-first mileage and receipt logger. Your data stays in this browser, on this computer." />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ctext%20y='0.9em'%20font-size='90'%3E%F0%9F%93%9A%3C/text%3E%3C/svg%3E" />
+</head>
+<body>
+  <header class="app-header no-print">
+    <div class="wrap">
+      <h1>🚗 Mileage & Receipts Logger</h1>
+      <p class="tagline">Log trips and receipts, see your monthly totals, export CSV. Everything stays in this browser — no accounts, no cloud, no personal data collected.</p>
+    </div>
+  </header>
+
+  <nav class="tabs no-print" aria-label="Sections">
+    <div class="wrap tabs-row">
+      <button class="tab-btn" data-tab="trips" id="tabbtn-trips" aria-controls="tab-trips">Trips</button>
+      <button class="tab-btn" data-tab="receipts" id="tabbtn-receipts" aria-controls="tab-receipts">Receipts</button>
+      <button class="tab-btn" data-tab="summary" id="tabbtn-summary" aria-controls="tab-summary">Summary</button>
+      <button class="tab-btn" data-tab="print" id="tabbtn-print" aria-controls="tab-print">Print View</button>
+      <button class="tab-btn" data-tab="help" id="tabbtn-help" aria-controls="tab-help">Help</button>
+      <button class="tab-btn tab-btn--settings" data-tab="settings" id="tabbtn-settings" aria-controls="tab-settings">Settings</button>
+    </div>
+  </nav>
+
+  <main class="wrap">
+
+    <!-- ================= TRIPS ================= -->
+    <section class="tab" id="tab-trips" role="tabpanel" aria-labelledby="tabbtn-trips" hidden>
+      <h2>Trips</h2>
+      <p class="hint">Every trip stores its own mileage rate, so you can always match the IRS rate
+        that was in effect that month. The default is filled in for you from Settings — change it here if you need a different rate for this trip.</p>
+
+      <form id="trip-form" class="card form-grid" novalidate>
+        <div class="field">
+          <label for="trip-date">Date</label>
+          <input type="date" id="trip-date" required />
+        </div>
+        <div class="field">
+          <label for="trip-purpose">Purpose</label>
+          <input type="text" id="trip-purpose" placeholder="Client meeting, supply run..." required />
+        </div>
+        <div class="field">
+          <label for="trip-from">From</label>
+          <input type="text" id="trip-from" placeholder="Home" />
+        </div>
+        <div class="field">
+          <label for="trip-to">To</label>
+          <input type="text" id="trip-to" placeholder="Office" />
+        </div>
+        <div class="field">
+          <label for="trip-miles">Miles driven</label>
+          <input type="number" id="trip-miles" min="0.1" step="0.1" inputmode="decimal" placeholder="e.g. 12.4" required />
+        </div>
+        <div class="field">
+          <label for="trip-rate">Rate ($ per mile)</label>
+          <input type="number" id="trip-rate" min="0.001" step="0.001" inputmode="decimal" required />
+        </div>
+        <div class="field field--full">
+          <button type="submit" id="trip-submit">Add trip</button>
+          <button type="button" id="trip-cancel-edit" hidden>Cancel edit</button>
+        </div>
+        <p class="msg field--full hidden" id="trip-msg" role="alert"></p>
+      </form>
+
+      <div id="trips-empty" class="empty-state">
+        <p>No trips yet. Add your first one above — for example, a drive to the post office.</p>
+      </div>
+      <div class="card table-card hidden" id="trips-table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th><th>Purpose</th><th>From → To</th><th class="num">Miles</th><th class="num">Rate</th><th class="num">Cost</th><th class="no-print"></th>
+            </tr>
+          </thead>
+          <tbody id="trips-list"></tbody>
+          <tfoot>
+            <tr><th colspan="3">Total</th><th class="num" id="trips-total-miles"></th><th></th><th class="num" id="trips-total-cost"></th><th class="no-print"></th></tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= RECEIPTS ================= -->
+    <section class="tab" id="tab-receipts" role="tabpanel" aria-labelledby="tabbtn-receipts" hidden>
+      <h2>Receipts</h2>
+      <p class="hint">Type in what you paid and choose a category. Categories make the monthly summary — and your bookkeeper — happy.</p>
+
+      <form id="receipt-form" class="card form-grid" novalidate>
+        <div class="field">
+          <label for="receipt-date">Date</label>
+          <input type="date" id="receipt-date" required />
+        </div>
+        <div class="field">
+          <label for="receipt-vendor">Vendor</label>
+          <input type="text" id="receipt-vendor" placeholder="Sample Supply Store" required />
+        </div>
+        <div class="field">
+          <label for="receipt-category">Category</label>
+          <select id="receipt-category" required></select>
+        </div>
+        <div class="field">
+          <label for="receipt-amount">Amount ($)</label>
+          <input type="number" id="receipt-amount" min="0.01" step="0.01" inputmode="decimal" placeholder="e.g. 24.99" required />
+        </div>
+        <div class="field field--full">
+          <label for="receipt-notes">Notes (optional)</label>
+          <input type="text" id="receipt-notes" placeholder="What was it for?" />
+        </div>
+        <div class="field field--full">
+          <button type="submit" id="receipt-submit">Add receipt</button>
+          <button type="button" id="receipt-cancel-edit" hidden>Cancel edit</button>
+        </div>
+        <p class="msg field--full hidden" id="receipt-msg" role="alert"></p>
+      </form>
+
+      <div id="receipts-empty" class="empty-state">
+        <p>No receipts yet. Add one you already have — even a $3 coffee while working counts as a receipt.</p>
+      </div>
+      <div class="card table-card hidden" id="receipts-table-card">
+        <table>
+          <thead>
+            <tr><th>Date</th><th>Vendor</th><th>Category</th><th class="num">Amount</th><th>Notes</th><th class="no-print"></th></tr>
+          </thead>
+          <tbody id="receipts-list"></tbody>
+          <tfoot>
+            <tr><th colspan="3">Total</th><th class="num" id="receipts-total-amount"></th><th></th><th class="no-print"></th></tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+
+    <!-- ================= SUMMARY ================= -->
+    <section class="tab" id="tab-summary" role="tabpanel" aria-labelledby="tabbtn-summary" hidden>
+      <h2>Monthly summary</h2>
+
+      <div class="card summary-controls no-print">
+        <label for="summary-month">Pick a month:</label>
+        <select id="summary-month"></select>
+        <span class="spacer"></span>
+        <button id="export-trips" type="button">CSV: trips</button>
+        <button id="export-receipts" type="button">CSV: receipts</button>
+        <button id="export-all" type="button">CSV: everything</button>
+      </div>
+
+      <div id="summary-empty" class="empty-state">
+        <p>Nothing to summarize yet. Add a trip or receipt first (or load sample data in <strong>Settings</strong>).</p>
+      </div>
+
+      <div id="summary-report" hidden>
+        <div id="summary-month-cards" class="cards"></div>
+        <div class="card" id="summary-category-card">
+          <h3>Receipts by category</h3>
+          <table><thead><tr><th>Category</th><th class="num">Total</th></tr></thead><tbody id="summary-categories"></tbody></table>
+        </div>
+        <div class="card">
+          <h3>Year at a glance</h3>
+          <table>
+            <thead>
+              <tr><th>Month</th><th class="num">Trips</th><th class="num">Miles</th><th class="num">Mileage ($)</th><th class="num">Receipts</th><th class="num">Receipts ($)</th><th class="num">Total</th></tr>
+            </thead>
+            <tbody id="summary-ytd"></tbody>
+            <tfoot id="summary-ytd-total"></tfoot>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PRINT VIEW ================= -->
+    <section class="tab" id="tab-print" role="tabpanel" aria-labelledby="tabbtn-print" hidden>
+      <div class="no-print">
+        <h2>Print view</h2>
+        <p class="hint">This is a clean copy of the month report, ready for your records or your accountant.
+          Pick a month on the <strong>Summary</strong> tab, then click <strong>Print</strong> (or press Ctrl/Cmd+P on this tab).</p>
+        <button id="btn-print" type="button" class="btn-primary">🖨️ Print this report</button>
+      </div>
+      <div id="print-report" class="print-report"></div>
+    </section>
+
+    <!-- ================= SETTINGS ================= -->
+    <section class="tab" id="tab-settings" role="tabpanel" aria-labelledby="tabbtn-settings" hidden>
+      <h2>Settings</h2>
+
+      <form id="settings-form" class="card form-grid">
+        <div class="field">
+          <label for="settings-name">Business name (shows on the printed report)</label>
+          <input type="text" id="settings-name" placeholder="Asdale Dynamics, LLC" />
+        </div>
+        <div class="field">
+          <label for="settings-rate">Default rate ($ per mile) for new trips</label>
+          <input type="number" id="settings-rate" min="0.001" step="0.001" />
+          <p class="tiny-hint">The IRS 2026 business rate is 72.5¢/mile (Jan–Jun) and 76¢/mile (Jul–Dec). The app fills this in automatically by trip date — but every field is editable.</p>
+        </div>
+        <div class="field field--full">
+          <button type="submit">Save settings</button>
+          <button type="button" id="btn-sample">Load sample data</button>
+          <button type="button" id="btn-backup">Download JSON backup</button>
+          <button type="button" id="btn-erase" class="btn-danger">Erase all data</button>
+        </div>
+        <p class="msg field--full hidden" id="settings-msg" role="alert"></p>
+      </form>
+
+      <div class="card">
+        <h3>Where is my data?</h3>
+        <p>In this browser, on this computer, under <code>localStorage</code>. It is not sent anywhere. Clearing your browser history/site data will delete it — so export CSVs (or a JSON backup) regularly.</p>
+      </div>
+    </section>
+
+    <!-- ================= HELP ================= -->
+    <section class="tab" id="tab-help" role="tabpanel" aria-labelledby="tabbtn-help" hidden>
+      <h2>Help</h2>
+      <div class="card">
+        <h3>Getting started, step by step</h3>
+        <ol>
+          <li><strong>Set your rate.</strong> Open <strong>Settings</strong> and check the default rate. The app already suggests the IRS business rate that was in effect for each trip date.</li>
+          <li><strong>Add a trip.</strong> On <strong>Trips</strong>, enter the date, why you drove, and the miles. The rate is filled in automatically — change it if you like. Click <strong>Add trip</strong>.</li>
+          <li><strong>Add receipts.</strong> On <strong>Receipts</strong>, enter the date, vendor, amount, and a category.</li>
+          <li><strong>Check your month.</strong> The <strong>Summary</strong> tab shows trips, miles, mileage dollars, receipts by category, and a grand total — plus a whole-year table.</li>
+          <li><strong>Export or print.</strong> Download CSVs from the Summary tab, or use <strong>Print View</strong> for a clean report — print it on paper, save it as a PDF, or hand it to your accountant.</li>
+        </ol>
+      </div>
+      <div class="card">
+        <h3>A few honest notes</h3>
+        <ul>
+          <li>This tool is a <strong>calculator and a notebook</strong>, not tax advice. Check current rates and rules at <em>irs.gov</em> or ask a tax professional.</li>
+          <li>Stored only on this computer, in this browser. If you use a different browser or device, that copy won't show your entries.</li>
+          <li>Backups matter: use the CSV export buttons, or make a JSON backup from Settings.</li>
+          <li>The mileage rate lookup only covers recent IRS rates (2024–2026). Older dates use the rate you type — which is still fully editable and recorded with the trip.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Keyboard shortcuts</h3>
+        <p>Nothing exotic: <kbd>Tab</kbd> to move between fields, <kbd>Enter</kbd> to save a form. That's it.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="no-print">
+    <div class="wrap">
+      <p>Made by <strong>Asdale Dynamics, LLC</strong> · <a href="https://dylanasdale.github.io" rel="noopener">dylanasdale.github.io</a> · MIT License · <span id="footer-entries"></span></p>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast no-print" role="status" aria-live="polite" hidden></div>
+
+  <script src="core.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
